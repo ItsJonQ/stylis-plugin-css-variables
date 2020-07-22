@@ -107,6 +107,22 @@ describe('getFallbackDeclaration', () => {
 
 			expect(result).toEqual('filter:blur(20px)');
 		});
+
+		test('should use heavily nested fallback with rgba value', () => {
+			const dec =
+				'color: var( --fontSize, var( --one, var( --two, var( --three, var( --four, rgba(0,0,0,0.2) ))  ) ) )';
+			const result = getFallbackDeclaration(dec);
+
+			expect(result).toEqual('color:rgba(0,0,0,0.2)');
+		});
+
+		test('should use variable fallback within rgba()', () => {
+			const dec =
+				'color: rgba( var(--r,255), var(--g,0), var(--b,0), var(--a, 0.5)) ';
+			const result = getFallbackDeclaration(dec);
+
+			expect(result).toEqual('color:rgba( 255, 0, 0, 0.5 )');
+		});
 	});
 
 	describe(':root fallback', () => {
@@ -154,6 +170,18 @@ describe('getFallbackDeclaration', () => {
 
 			// Second pass
 			expect(result).toEqual('font-size:20px');
+		});
+
+		test('should use root value within rgba()', () => {
+			document.documentElement.style.setProperty('--r', '0');
+			document.documentElement.style.setProperty('--g', '255');
+			document.documentElement.style.setProperty('--b', '0');
+			document.documentElement.style.setProperty('--a', '0.5');
+
+			const dec = 'color: rgba( var(--r), var(--g), var(--b), var(--a)) ';
+			const result = getFallbackDeclaration(dec);
+
+			expect(result).toEqual('color:rgba( 0, 255, 0, 0.5 )');
 		});
 	});
 });

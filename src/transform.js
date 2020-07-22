@@ -42,7 +42,8 @@ function getPropValue(declaration) {
 			 * After:
 			 * ['--bg', 'black']
 			 */
-			const [customProp, customFallback] = parsedValue.split(',');
+			const [customProp, ...fallbacks] = parsedValue.split(',');
+			const customFallback = fallbacks.join(',');
 
 			// Attempt to get the CSS variable from :root. Otherwise, use the provided fallback.
 			const fallback = getRootPropertyValue(customProp) || customFallback;

@@ -76,7 +76,7 @@ If a fallback is found, the static value will be prepended before the original C
 }
 ```
 
-However, if there are no `:root` values or fallbacks, then no static vaue will be generated.
+However, if there are no `:root` values or fallbacks, then no static value will be generated.
 
 Nested `var()` is supported!
 

@@ -1,7 +1,6 @@
 # stylis-plugin-css-variables
 
 [![Build Status](https://travis-ci.org/ItsJonQ/stylis-plugin-css-variables.svg?branch=master)](https://travis-ci.org/ItsJonQ/stylis-plugin-css-variables)
-[![codecov](https://codecov.io/gh/ItsJonQ/stylis-plugin-css-variables/branch/master/graph/badge.svg)](https://codecov.io/gh/ItsJonQ/stylis-plugin-css-variables)
 [![npm version](https://badge.fury.io/js/stylis-plugin-css-variables.svg)](https://badge.fury.io/js/stylis-plugin-css-variables)
 
 > Stylis plugin that transforms CSS variable into static values for non-supported browsers.

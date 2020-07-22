@@ -100,7 +100,7 @@ describe('stylisPluginCssVariables', () => {
 			'background: var( --bg );',
 			'font-size:14px;',
 			'font-size: var( --font, 14px );',
-			'transform:translate(0,0)scale(2);',
+			'transform:translate( 0 , 0) scale( 2);',
 			'transform: translate( var(--x, 0) , 0) scale( var(--size, 1) );',
 			'z-index:2;',
 			'z-index: var( --z, var( --z2, 2) );',

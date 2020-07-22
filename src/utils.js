@@ -87,5 +87,5 @@ export function sanitizeParens(value) {
 		result = value.replace(trimRegExp, '');
 	}
 
-	return result;
+	return result?.trim();
 }

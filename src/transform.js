@@ -16,7 +16,8 @@ import {
 function getPropValue(declaration) {
 	let hasFallbackValue = false;
 	// Start be separating (and preparing) the prop and value from the declaration.
-	let [prop, value] = declaration.replace(/ /g, '').split(/:/);
+	let [prop, value] = declaration.split(/:/);
+	prop = prop.trim();
 
 	// Searching for uses of var().
 	const matches =
@@ -24,9 +25,10 @@ function getPropValue(declaration) {
 		/* istanbul ignore next */
 		[];
 
-	for (const match of matches) {
+	for (let match of matches) {
+		match = match.trim();
 		// Splitting again allows us to traverse through nested vars().
-		const entries = match.split('var(').filter(Boolean);
+		const entries = match.replace(/ /g, '').split('var(').filter(Boolean);
 
 		for (const entry of entries) {
 			// Removes extra parentheses

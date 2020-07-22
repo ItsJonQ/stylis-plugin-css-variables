@@ -67,6 +67,13 @@ describe('getFallbackDeclaration', () => {
 
 			expect(result).toEqual('transform:translate3d(5px,10px,0)');
 		});
+
+		test('should correctly transform shorthand CSS properties', () => {
+			const dec = 'transition: all var(--d, 100ms) var(--e, ease)';
+			const result = getFallbackDeclaration(dec);
+
+			expect(result).toEqual('transition:all 100ms ease');
+		});
 	});
 
 	describe('nested', () => {

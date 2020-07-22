@@ -2,7 +2,7 @@
  * @jest-environment jsdom
  */
 
-import { getFallbackDeclaration } from '../transform';
+import { getFallbackDeclaration, transformContent } from '../transform';
 
 /*
  * This function is used within the stylisPluginCssCustomProperties plugin.
@@ -147,6 +147,24 @@ describe('getFallbackDeclaration', () => {
 
 			// Second pass
 			expect(result).toEqual('font-size:20px');
+		});
+	});
+});
+
+describe('transformContent', () => {
+	describe('invalid', () => {
+		test('should return undefined if it does not contain var()', () => {
+			const dec = 'font-size:14px;';
+			const result = transformContent(dec);
+
+			expect(result).toEqual(undefined);
+		});
+
+		test('should return undefined fallback value is non are provided', () => {
+			const dec = 'font-size: var( --fontSize );';
+			const result = transformContent(dec);
+
+			expect(result).toEqual(undefined);
 		});
 	});
 });

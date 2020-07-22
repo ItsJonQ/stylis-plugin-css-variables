@@ -39,6 +39,7 @@ export function getRootPropertyValue(key) {
 	// We'll attempt to get the CSS variable from :root.
 	let rootStyles = rootComputedStyles;
 
+	/* istanbul ignore next */
 	if (process.env.NODE_ENV === 'test') {
 		/*
 		 * The cached rootComputedStyles does not retrieve the latest values

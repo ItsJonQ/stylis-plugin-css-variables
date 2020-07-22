@@ -19,7 +19,10 @@ function getPropValue(declaration) {
 	let [prop, value] = declaration.replace(/ /g, '').split(/:/);
 
 	// Searching for uses of var().
-	const matches = value.match(VAR_REG_EXP) || [];
+	const matches =
+		value.match(VAR_REG_EXP) ||
+		/* istanbul ignore next */
+		[];
 
 	for (const match of matches) {
 		// Splitting again allows us to traverse through nested vars().

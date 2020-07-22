@@ -20,7 +20,10 @@ const defaultOptions = {
  * function. If one is not provided, it will attempt to use the matching
  * variable declared at the :root scope.
  */
-export function stylisPluginCssVariables(options = {}) {
+export function stylisPluginCssVariables(
+	/* istanbul ignore next */
+	options = {},
+) {
 	const { skipSupportedBrowsers } = { ...defaultOptions, ...options };
 
 	const seen = new WeakSet();
@@ -36,10 +39,13 @@ export function stylisPluginCssVariables(options = {}) {
 		type,
 	) => {
 		// Skip generating CSS variable fallbacks for supported browsers
+		/* istanbul ignore next */
 		if (skipSupportedBrowsers && isNativeSupport) return;
 
 		// Borrowed guard implementation from:
 		// https://github.com/Andarist/stylis-plugin-extra-scope/blob/master/src/index.js#L15
+
+		/* istanbul ignore next */
 		if (context !== 2 || type === 107 || seen.has(selectors)) return;
 
 		// We only need to process the content if a CSS var() is used.

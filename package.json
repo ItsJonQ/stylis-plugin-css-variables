@@ -1,0 +1,50 @@
+{
+  "name": "stylis-plugin-css-variables",
+  "version": "0.0.0",
+  "description": "Stylis plugin that transforms CSS variable into static values for non-supported browsers.",
+  "main": "dist/cjs/index.js",
+  "module": "dist/es/index.js",
+  "sideEffects": false,
+  "private": false,
+  "scripts": {
+    "prestart": "zero prestart",
+    "build:es": "BUILD_FORMAT=es zero build -d dist/es",
+    "build:cjs": "BUILD_FORMAT=cjs zero build -d dist/cjs",
+    "build": "npm run build:cjs && npm run build:es -- --no-clean",
+    "lint": "zero lint",
+    "dev": "zero test",
+    "test": "zero test --coverage",
+    "test:coverage": "zero test --coverage",
+    "format": "zero format",
+    "validate": "zero validate",
+    "release": "zero release",
+    "version": "npm run build",
+    "precommit": "zero pre-commit"
+  },
+  "files": [
+    "dist",
+    "README.md",
+    "LICENSE"
+  ],
+  "author": "Jon Quach <hello@jonquach.com> (https://jonquach.com)",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/itsjonq/stylis-plugin-css-variables.git"
+  },
+  "bugs": {
+    "url": "https://github.com/itsjonq/stylis-plugin-css-variables/issues"
+  },
+  "homepage": "https://github.com/itsjonq/stylis-plugin-css-variables#readme",
+  "keywords": [],
+  "license": "MIT",
+  "dependencies": {
+    "@ungap/weakset": "^0.2.1",
+    "memize": "^1.1.0"
+  },
+  "devDependencies": {
+    "@itsjonq/zero": "5.0.1"
+  },
+  "publishConfig": {
+    "access": "public"
+  }
+}

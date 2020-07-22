@@ -35,7 +35,17 @@
     "url": "https://github.com/itsjonq/stylis-plugin-css-variables/issues"
   },
   "homepage": "https://github.com/itsjonq/stylis-plugin-css-variables#readme",
-  "keywords": [],
+  "keywords": [
+    "stylis",
+    "css-in-js",
+    "ie11",
+    "css",
+    "variables",
+    "css-variables",
+    "plugin",
+    "emotion",
+    "styled-components"
+  ],
   "license": "MIT",
   "dependencies": {
     "@ungap/weakset": "^0.2.1",

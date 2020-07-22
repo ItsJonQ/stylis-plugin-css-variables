@@ -1,6 +1,6 @@
 {
   "name": "stylis-plugin-css-variables",
-  "version": "0.0.0",
+  "version": "1.0.0",
   "description": "Stylis plugin that transforms CSS variable into static values for non-supported browsers.",
   "main": "dist/cjs/index.js",
   "module": "dist/es/index.js",

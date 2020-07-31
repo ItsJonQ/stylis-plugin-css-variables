@@ -79,6 +79,7 @@ describe('stylisPluginCssVariables', () => {
 	test('should return fallback declarations for every var() call', () => {
 		// Set :root variables
 		document.documentElement.style.setProperty('--bg', 'black');
+		document.documentElement.style.setProperty('--height', '30px');
 		document.documentElement.style.setProperty('--size', '2');
 
 		const plugin = createPlugin();
@@ -87,6 +88,7 @@ describe('stylisPluginCssVariables', () => {
 		const input = [
 			'background: var( --bg );',
 			'font-size: var( --font, 14px );',
+			'height: calc((var(--height, 20px) * 1.2));',
 			'transform: translate( var(--x, 0) , 0) scale( var(--size, 1) );',
 			'z-index: var( --z, var( --z2, 2) );',
 		];
@@ -100,6 +102,8 @@ describe('stylisPluginCssVariables', () => {
 			'background: var( --bg );',
 			'font-size:14px;',
 			'font-size: var( --font, 14px );',
+			'height:calc((30px * 1.2));',
+			'height: calc((var(--height, 20px) * 1.2));',
 			'transform:translate( 0 , 0) scale( 2);',
 			'transform: translate( var(--x, 0) , 0) scale( var(--size, 1) );',
 			'z-index:2;',

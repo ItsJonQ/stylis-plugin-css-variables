@@ -1,10 +1,10 @@
 export const VAR_REG_EXP = new RegExp(/var\(.*?\)[ ) ]*/, 'g');
 
-const htmlRootNode = window?.document?.documentElement;
-
-// Detects native CSS varialble support
-// https://github.com/jhildenbiddle/css-vars-ponyfill/blob/master/src/index.js
-export const isNativeSupport = window?.CSS?.supports('(--a: 0)');
+let htmlRootNode;
+/* istanbul ignore next */
+if (typeof window !== 'undefined') {
+	htmlRootNode = window?.document?.documentElement;
+}
 
 /*
  * Caching the computedStyle instance for document.documentElement.

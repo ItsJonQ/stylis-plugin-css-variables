@@ -1,7 +1,15 @@
 import WeakSet from '@ungap/weakset';
 
 import { memoizedTransformContent } from './transform';
-import { hasVariable, isNativeSupport } from './utils';
+import { hasVariable } from './utils';
+
+// Detects native CSS varialble support
+// https://github.com/jhildenbiddle/css-vars-ponyfill/blob/master/src/index.js
+let isNativeSupport = true;
+/* istanbul ignore next */
+if (typeof window !== 'undefined') {
+	isNativeSupport = window?.CSS?.supports('(--a: 0)');
+}
 
 /*
  * This plugin is for the stylis library. It's the CSS compiler used by

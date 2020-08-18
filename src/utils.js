@@ -1,6 +1,6 @@
 export const VAR_REG_EXP = new RegExp(/var\(.*?\)[ ) ]*/, 'g');
 
-const htmlRootNode = document?.documentElement;
+const htmlRootNode = window?.document?.documentElement;
 
 // Detects native CSS varialble support
 // https://github.com/jhildenbiddle/css-vars-ponyfill/blob/master/src/index.js

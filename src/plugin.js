@@ -7,7 +7,11 @@ import { hasVariable } from './utils';
 // https://github.com/jhildenbiddle/css-vars-ponyfill/blob/master/src/index.js
 let isNativeSupport = true;
 /* istanbul ignore next */
-if (typeof window !== 'undefined') {
+if (
+	typeof window !== 'undefined' &&
+	typeof window.CSS !== 'undefined' &&
+	typeof window.CSS.supports !== 'undefined'
+) {
 	isNativeSupport = window?.CSS?.supports('(--a: 0)');
 }
 

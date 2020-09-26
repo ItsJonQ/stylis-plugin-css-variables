@@ -5,15 +5,8 @@ import { hasVariable } from './utils';
 
 // Detects native CSS varialble support
 // https://github.com/jhildenbiddle/css-vars-ponyfill/blob/master/src/index.js
-let isNativeSupport = true;
-/* istanbul ignore next */
-if (
-	typeof window !== 'undefined' &&
-	typeof window.CSS !== 'undefined' &&
-	typeof window.CSS.supports !== 'undefined'
-) {
-	isNativeSupport = window?.CSS?.supports('(--a: 0)');
-}
+let isNativeSupport =
+	typeof window !== 'undefined' && window?.CSS?.supports?.('(--a: 0)');
 
 /*
  * This plugin is for the stylis library. It's the CSS compiler used by
@@ -51,7 +44,6 @@ export function stylisPluginCssVariables(
 		type,
 	) => {
 		// Skip generating CSS variable fallbacks for supported browsers
-		/* istanbul ignore next */
 		if (skipSupportedBrowsers && isNativeSupport) return;
 
 		// Borrowed guard implementation from:

@@ -23,8 +23,9 @@ describe('stylisPluginCssVariables', () => {
 	};
 	/* eslint-enable */
 
-	const createPlugin = () =>
-		stylisPluginCssVariables({ skipSupportedBrowsers: false });
+	// in JSDOM, `window.CSS` is undefined (at least in the environment used here)
+	// so we don't need to process supported browsers
+	const createPlugin = () => stylisPluginCssVariables();
 
 	test('should return undefined if no fallbacks are available', () => {
 		const plugin = createPlugin();
@@ -133,6 +134,61 @@ describe('stylisPluginCssVariables', () => {
 			'font-size: var( --font, 14px );',
 			'z-index: var( --z );',
 		];
+
+		expect(result).toBe(compiled.join(''));
+	});
+
+	test('it should skip when the browser is supported', () => {
+		// reset the module registry
+		jest.resetModules();
+		// actually make JSDOM look like it supports CSS vars (it doesn't by default)
+		window.CSS = {
+			supports: jest.fn(() => true),
+		};
+		// re-require the plugin to re-run the side-effect-y `isNativeSupport`
+		const {
+			stylisPluginCssVariables: pluginFactory,
+		} = require('../plugin');
+
+		// create the plugin w/ the factory from the re-required
+		const plugin = pluginFactory();
+		const args = { ...baseArgs };
+
+		const input = ['font-size: var( --font, 14px );'];
+
+		args.content = input.join('');
+
+		const result = plugin(...Object.values(args));
+
+		expect(result).toBe(undefined);
+
+		// the default value for window.CSS in JSDOM
+		window.CSS = undefined;
+	});
+
+	test('it should not skip supported browsers when skipSupportedBrowsers is false', () => {
+		// reset the module registry
+		jest.resetModules();
+		// actually make JSDOM look like it supports CSS vars (it doesn't by default)
+		window.CSS = {
+			supports: jest.fn(() => true),
+		};
+		// re-require the plugin to re-run the side-effect-y `isNativeSupport`
+		const {
+			stylisPluginCssVariables: pluginFactory,
+		} = require('../plugin');
+
+		// create the plugin w/ the factory from the re-required
+		const plugin = pluginFactory({ skipSupportedBrowsers: false });
+		const args = { ...baseArgs };
+
+		const input = ['font-size: var( --font, 14px );'];
+
+		args.content = input.join('');
+
+		const result = plugin(...Object.values(args));
+
+		const compiled = ['font-size:14px;', 'font-size: var( --font, 14px );'];
 
 		expect(result).toBe(compiled.join(''));
 	});

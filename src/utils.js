@@ -46,10 +46,12 @@ export function getRootPropertyValue(key) {
 		 * in our environment (JSDOM). In that case, we'll create a fresh
 		 * instance computedStyles on the root HTML element.
 		 */
-		rootStyles = window.getComputedStyle(document.documentElement);
+		rootStyles =
+			typeof window !== 'undefined' &&
+			window.getComputedStyle(document.documentElement);
 	}
 
-	return rootStyles?.getPropertyValue(key)?.trim();
+	return rootStyles?.getPropertyValue?.(key)?.trim();
 }
 
 /**

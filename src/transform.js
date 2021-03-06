@@ -1,68 +1,134 @@
 import memoize from 'memize';
 
-import {
-	getRootPropertyValue,
-	hasVariable,
-	sanitizeParens,
-	VAR_REG_EXP,
-} from './utils';
+import { getRootPropertyValue, hasVariable } from './utils';
+
+/**
+ * Returns new string, removes characters from source string
+ * @param {number} start Index at which to start changing the string.
+ * @param {number} delCount An integer indicating the number of old chars to remove.
+ * @param {string} newSubStr The String that is spliced in.
+ * @return {string} A new string with the spliced substring.
+ */
+function splice(str, index, count, newSubStr = '') {
+	if (index > str.length - 1) return str;
+	return str.substring(0, index) + newSubStr + str.substring(index + count);
+}
 
 /**
  * Interprets and retrieves the CSS property and value of a declaration rule.
- *
  * @param {string} declaration A CSS declaration rule to parse.
  * @return {Array<string, ?string>} [prop, value] parsed from the declaration.
  */
 function getPropValue(declaration) {
-	let hasFallbackValue = false;
 	// Start be separating (and preparing) the prop and value from the declaration.
 	let [prop, value] = declaration.split(/:/);
 	prop = prop.trim();
 
-	// Searching for uses of var().
-	const matches =
-		value.match(VAR_REG_EXP) ||
-		/* istanbul ignore next */
-		[];
+	// Creating map of string with var, parentheses and vars values.
+	const regexp = new RegExp(/var|\(|\)/, 'g');
+	const map = { var: [], ob: [], cb: [], values: {} };
+	let matches = regexp.exec(value);
+	while (matches != null) {
+		switch (matches[0]) {
+			case 'var':
+				map.var.push(matches.index);
+				break;
+			case '(':
+				map.ob.push(matches.index);
+				break;
+			case ')':
+			default:
+				map.cb.push(matches.index);
+				break;
+		}
 
-	for (let match of matches) {
-		match = match.trim();
-		// Splitting again allows us to traverse through nested vars().
-		const entries = match.replace(/ /g, '').split('var(').filter(Boolean);
+		matches = regexp.exec(value);
+	}
 
-		for (const entry of entries) {
-			// Removes extra parentheses
-			const parsedValue = sanitizeParens(entry);
-			/**
-			 * Splits a CSS variable into it's custom property name and fallback.
-			 *
-			 * Before:
-			 * '--bg, black'
-			 *
-			 * After:
-			 * ['--bg', 'black']
-			 */
-			const [customProp, ...fallbacks] = parsedValue.split(',');
-			const customFallback = fallbacks.join(',');
+	if (map.var.length === 0 || map.cb.length !== map.ob.length) {
+		return [prop, undefined];
+	}
 
-			// Attempt to get the CSS variable from :root. Otherwise, use the provided fallback.
-			const fallback = getRootPropertyValue(customProp) || customFallback;
+	// filling character`s indices for removing
+	const removeIndices = [];
+	for (let i = 0; i < map.var.length; i++) {
+		// calc var`s opened parentheses index
+		const obIndex = map.ob.indexOf(map.var[i] + 3);
+		// calc var`s closed parentheses index
+		let cbIndex = 0;
+		let ob = obIndex;
+		while (map.ob[ob + 1] < map.cb[cbIndex] && ob < map.ob.length - 1) {
+			ob++;
+			cbIndex++;
+		}
 
-			if (fallback) {
-				hasFallbackValue = true;
-				/*
-				 * If a valid fallback value is discovered, we'll replace it in
-				 * our value.
-				 */
-				value = value.replace(match, fallback);
+		while (map.ob[ob] > map.cb[cbIndex] && cbIndex < map.cb.length - 1) {
+			cbIndex++;
+		}
+
+		// removes var and parentheses
+		removeIndices.push(map.var[i]);
+		removeIndices.push(map.var[i] + 1);
+		removeIndices.push(map.var[i] + 2);
+		removeIndices.push(map.ob[obIndex]);
+		removeIndices.push(map.cb[cbIndex]);
+
+		// removes var`s name
+		let n = map.ob[obIndex] + 1;
+		while (value[n - 1 || 0] !== ',' && n < map.cb[cbIndex]) {
+			removeIndices.push(n);
+			n++;
+		}
+
+		// gets var`s value from root
+		const [name] = value
+			.substring(map.ob[obIndex] + 1, map.cb[cbIndex])
+			.trim()
+			.split(',');
+		const rootValue = getRootPropertyValue(name);
+
+		// needs to fill value from root
+		if (n === map.cb[cbIndex] || rootValue) {
+			// removes var`s default value
+			while (n < map.cb[cbIndex]) {
+				removeIndices.push(n);
+				n++;
 			}
+
+			map.values[map.var[i]] = rootValue;
+		}
+
+		// trim whitespaces
+		while (value[n] === ' ') {
+			removeIndices.push(n);
+			n++;
 		}
 	}
 
-	// We only want to return a value if we're able to locate a fallback value.
-	value = hasFallbackValue ? sanitizeParens(value) : undefined;
+	// applies map to string - removes var and insert values
+	let count = 1;
+	removeIndices
+		.sort((a, b) => b - a)
+		.forEach((sIndex, iIndex) => {
+			if (map.values[sIndex] != null) {
+				value = splice(value, sIndex, count, map.values[sIndex]);
+				count = 1;
+				return;
+			}
 
-	return [prop, value];
+			if (
+				iIndex === removeIndices.length - 1 ||
+				removeIndices[iIndex + 1] !== sIndex - 1
+			) {
+				value = splice(value, sIndex, count);
+				count = 1;
+				return;
+			}
+
+			count++;
+		});
+
+	return [prop, value.trim()];
 }
 
 /**

@@ -29,6 +29,13 @@ describe('getFallbackDeclaration', () => {
 
 			expect(result).toEqual(undefined);
 		});
+
+		test('should return undefined fallback value if passed wrong parentness count', () => {
+			const dec = 'font-size: var(( --fontSize )';
+			const result = getFallbackDeclaration(dec);
+
+			expect(result).toEqual(undefined);
+		});
 	});
 
 	describe('basic', () => {
@@ -74,6 +81,16 @@ describe('getFallbackDeclaration', () => {
 
 			expect(result).toEqual('transition:all 100ms ease');
 		});
+
+		test('should correctly transform linear-gradient property', () => {
+			const dec =
+				'background-image: var(--gradient,linear-gradient(90deg, rgba(2,0,36,1) 20%, rgba(9,9,121,0.5872724089635855) 35%, rgba(0,212,255,0) 40%));';
+			const result = getFallbackDeclaration(dec);
+
+			expect(result).toEqual(
+				'background-image:linear-gradient(90deg, rgba(2,0,36,1) 20%, rgba(9,9,121,0.5872724089635855) 35%, rgba(0,212,255,0) 40%);',
+			);
+		});
 	});
 
 	describe('nested', () => {
@@ -118,7 +135,7 @@ describe('getFallbackDeclaration', () => {
 
 		test('should use variable fallback within rgba()', () => {
 			const dec =
-				'color: rgba( var(--r,255), var(--g,0), var(--b,0), var(--a, 0.5)) ';
+				'color: rgba( var(--r,255), var(--g,0), var(--b,0), var(--a, 0.5) )';
 			const result = getFallbackDeclaration(dec);
 
 			expect(result).toEqual('color:rgba( 255, 0, 0, 0.5 )');
@@ -178,7 +195,7 @@ describe('getFallbackDeclaration', () => {
 			document.documentElement.style.setProperty('--b', '0');
 			document.documentElement.style.setProperty('--a', '0.5');
 
-			const dec = 'color: rgba( var(--r), var(--g), var(--b), var(--a)) ';
+			const dec = 'color: rgba( var(--r), var(--g), var(--b), var(--a) )';
 			const result = getFallbackDeclaration(dec);
 
 			expect(result).toEqual('color:rgba( 0, 255, 0, 0.5 )');

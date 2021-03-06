@@ -1,5 +1,3 @@
-export const VAR_REG_EXP = new RegExp(/var\(.*?\)[ ) ]*/, 'g');
-
 let htmlRootNode;
 /* istanbul ignore next */
 if (typeof window !== 'undefined') {
@@ -18,16 +16,6 @@ if (typeof window !== 'undefined') {
  */
 const rootComputedStyles =
 	htmlRootNode && window.getComputedStyle(htmlRootNode);
-
-/**
- * Repeats a character x amount of times.
- * @param {string} char Character to repeat.
- * @param {number} n Number of times to repeat.
- * @return {string} String with repeated characters
- */
-function repeat(char, n, a) {
-	return (a = []).join((a[n - 1] = char));
-}
 
 /**
  * Retrieves the custom CSS variable from the :root selector.
@@ -62,32 +50,4 @@ export function getRootPropertyValue(key) {
  */
 export function hasVariable(declaration) {
 	return declaration.includes('var(');
-}
-
-/**
- * Appends or trims parens from a value.
- *
- * @param {string} value Value to sanitize.
- * @return {string} The sanitized value
- */
-export function sanitizeParens(value) {
-	const parenStartCount = value.match(/\(/g)?.length || 0;
-	const parenEndCount = value.match(/\)/g)?.length || 0;
-
-	const parenAppendCound = parenStartCount - parenEndCount;
-	const parenTrimCount = parenEndCount - parenStartCount;
-
-	let result;
-
-	if (parenStartCount > parenEndCount) {
-		// We need to append ) to the end if there are any missing.
-		const append = repeat(')', parenAppendCound);
-		result = `${value}${append}`;
-	} else {
-		// Otherwise, we need to trim the extra parens at the end.
-		const trimRegExp = new RegExp(`((\\)){${parenTrimCount}})$`, 'gi');
-		result = value.replace(trimRegExp, '');
-	}
-
-	return result?.trim();
 }

@@ -60,6 +60,7 @@ describe('stylisPluginCssVariables', () => {
 			'font-size: var( --font, 14px );',
 			'filter: var( --blur, blur(20px) );',
 			'transform: translate3d(0, 0, 0);',
+			'background-image: var(--gradient,linear-gradient(90deg,rgba(2,0,36,1) 20%, rgba(9,9,121,0.5872724089635855) 35%, rgba(0,212,255,0) 40%));',
 		];
 
 		args.content = input.join('');
@@ -72,6 +73,8 @@ describe('stylisPluginCssVariables', () => {
 			'filter:blur(20px);',
 			'filter: var( --blur, blur(20px) );',
 			'transform: translate3d(0, 0, 0);',
+			'background-image:linear-gradient(90deg,rgba(2,0,36,1) 20%, rgba(9,9,121,0.5872724089635855) 35%, rgba(0,212,255,0) 40%);',
+			'background-image: var(--gradient,linear-gradient(90deg,rgba(2,0,36,1) 20%, rgba(9,9,121,0.5872724089635855) 35%, rgba(0,212,255,0) 40%));',
 		];
 
 		expect(result).toBe(compiled.join(''));
@@ -105,7 +108,7 @@ describe('stylisPluginCssVariables', () => {
 			'font-size: var( --font, 14px );',
 			'height:calc((30px * 1.2));',
 			'height: calc((var(--height, 20px) * 1.2));',
-			'transform:translate( 0 , 0) scale( 2);',
+			'transform:translate( 0 , 0) scale( 2 );',
 			'transform: translate( var(--x, 0) , 0) scale( var(--size, 1) );',
 			'z-index:2;',
 			'z-index: var( --z, var( --z2, 2) );',
